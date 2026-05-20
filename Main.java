@@ -1,321 +1,269 @@
+import Livro.Livro;
+
 public class Main {
-    Arquivo: SaldoInsuficienteException.java
-package ao.universidade.poo.banco;
+    public static void main(String[] args) {
+        //Problema 1 — Sistema de Biblioteca
+Arquivo: Livro.java
+package ao.universidade.poo.biblioteca;
 
-    public class SaldoInsuficienteException extends Exception {
+        public class Livro {
+            private String titulo;
+            private String autor;
+            private String isbn;
+            private boolean disponivel = true;
 
-        public SaldoInsuficienteException(String mensagem) {
-            super(mensagem);
-        }
-    }
-    Arquivo: Conta.java
-package ao.universidade.poo.banco;
-
-    public class Conta {
-
-        protected String numero;
-        protected double saldo;
-
-        public Conta(String numero, double saldoInicial) {
-
-            if (numero == null || numero.isBlank()) {
-                throw new IllegalArgumentException("Número inválido");
+            public Livro(String titulo, String autor, String isbn) {
+                setTitulo(titulo);
+                setAutor(autor);
+                setIsbn(isbn);
             }
 
-            this.numero = numero;
-            this.saldo = saldoInicial;
-        }
+            public String getTitulo() {
+                return titulo;
+            }
 
-        public String getNumero() {
-            return numero;
-        }
+            public void setTitulo(String titulo) {
+                if (titulo == null || titulo.isBlank()) {
+                    throw new IllegalArgumentException("Título inválido");
+                }
+                this.titulo = titulo;
+            }
 
-        public double getSaldo() {
-            return saldo;
-        }
+            public String getAutor() {
+                return autor;
+            }
 
-        public void depositar(double valor) {
+            public void setAutor(String autor) {
+                if (autor == null || autor.isBlank()) {
+                    throw new IllegalArgumentException("Autor inválido");
+                }
+                this.autor = autor;
+            }
 
-            if (valor <= 0) {
-                throw new IllegalArgumentException(
-                        "Valor de depósito deve ser positivo"
+            public String getIsbn() {
+                return isbn;
+            }
+
+            public void setIsbn(String isbn) {
+                if (isbn == null || isbn.length() != 13) {
+                    throw new IllegalArgumentException("ISBN deve ter 13 caracteres");
+                }
+                this.isbn = isbn;
+            }
+
+            public boolean isDisponivel() {
+                return disponivel;
+            }
+
+            public boolean emprestar() {
+                if (!disponivel) {
+                    return false;
+                }
+
+                disponivel = false;
+                return true;
+            }
+
+            public void devolver() {
+                disponivel = true;
+            }
+
+            public String info() {
+                return String.format(
+                        "%s - %s (ISBN: %s) Disponível: %s",
+                        titulo,
+                        autor,
+                        isbn,
+                        disponivel ? "Sim" : "Não"
                 );
             }
 
-            saldo += valor;
-        }
-
-        public void sacar(double valor)
-                throws SaldoInsuficienteException {
-
-            if (valor <= 0) {
-                throw new IllegalArgumentException(
-                        "Valor de saque deve ser positivo"
-                );
+            @Override
+            public String toString() {
+                return info();
             }
-
-            if (saldo < valor) {
-                throw new SaldoInsuficienteException(
-                        "Saldo insuficiente: saldo="
-                                + saldo
-                                + ", valor="
-                                + valor
-                );
-            }
-
-            saldo -= valor;
         }
-
-        public void transferir(Conta destino, double valor)
-                throws SaldoInsuficienteException {
-
-            if (destino == null) {
-                throw new IllegalArgumentException(
-                        "Conta destino nula"
-                );
-            }
-
-            sacar(valor);
-            destino.depositar(valor);
-        }
-
-        @Override
-        public String toString() {
-            return String.format(
-                    "Conta %s - Saldo: %.2f",
-                    numero,
-                    saldo
-            );
-        }
-    }
-//Arquivo: ContaCorrente.java
-package ao.universidade.poo.banco;
-
-    public class ContaCorrente extends Conta {
-
-        private double limite;
-
-        public ContaCorrente(
-                String numero,
-                double saldoInicial,
-                double limite
-        ) {
-
-            super(numero, saldoInicial);
-
-            if (limite < 0) {
-                throw new IllegalArgumentException("Limite negativo");
-            }
-
-            this.limite = limite;
-        }
-
-        public double getLimite() {
-            return limite;
-        }
-
-        public void setLimite(double limite) {
-
-            if (limite < 0) {
-                throw new IllegalArgumentException("Limite negativo");
-            }
-
-            this.limite = limite;
-        }
-
-        @Override
-        public void sacar(double valor)
-                throws SaldoInsuficienteException {
-
-            if (valor <= 0) {
-                throw new IllegalArgumentException(
-                        "Valor de saque deve ser positivo"
-                );
-            }
-
-            if (saldo + limite < valor) {
-                throw new SaldoInsuficienteException(
-                        "Saldo + limite insuficiente: saldo="
-                                + saldo
-                                + ", limite="
-                                + limite
-                                + ", valor="
-                                + valor
-                );
-            }
-
-            saldo -= valor;
-        }
-
-        @Override
-        public String toString() {
-            return String.format(
-                    "ContaCorrente %s - Saldo: %.2f - Limite: %.2f",
-                    numero,
-                    saldo,
-                    limite
-            );
-        }
-    }
-    Arquivo: ContaPoupanca.java
-package ao.universidade.poo.banco;
-
-    public class ContaPoupanca extends Conta {
-
-        private double taxaRendimento;
-
-        public ContaPoupanca(
-                String numero,
-                double saldoInicial,
-                double taxaRendimento
-        ) {
-
-            super(numero, saldoInicial);
-
-            if (taxaRendimento < 0) {
-                throw new IllegalArgumentException("Taxa negativa");
-            }
-
-            this.taxaRendimento = taxaRendimento;
-        }
-
-        public double getTaxaRendimento() {
-            return taxaRendimento;
-        }
-
-        public void setTaxaRendimento(double taxaRendimento) {
-
-            if (taxaRendimento < 0) {
-                throw new IllegalArgumentException("Taxa negativa");
-            }
-
-            this.taxaRendimento = taxaRendimento;
-        }
-
-        public void aplicarRendimento() {
-            saldo += saldo * taxaRendimento;
-        }
-
-        @Override
-        public String toString() {
-            return String.format(
-                    "ContaPoupanca %s - Saldo: %.2f - Taxa: %.4f",
-                    numero,
-                    saldo,
-                    taxaRendimento
-            );
-        }
-    }
-    Arquivo: BancoApp.java
-package ao.universidade.poo.banco;
+Arquivo: Aluno.java
+package ao.universidade.poo.biblioteca;
 
 import java.util.ArrayList;
 import java.util.List;
 
-    public class BancoApp {
+        public class Aluno {
+            private String nome;
+            private String numeroMatricula;
+            private String curso;
+            private List<Livro> emprestimos = new ArrayList<>();
 
-        public static void main(String[] args) {
-
-            List<Conta> contas = new ArrayList<>();
-
-            ContaCorrente cc1 = new ContaCorrente(
-                    "001",
-                    500.0,
-                    300.0
-            );
-
-            ContaPoupanca cp1 = new ContaPoupanca(
-                    "002",
-                    1000.0,
-                    0.01
-            );
-
-            contas.add(cc1);
-            contas.add(cp1);
-
-            System.out.println("Estado inicial das contas:");
-            imprimirContas(contas);
-            System.out.println();
-
-            System.out.println("Depositando 200 em todas as contas:");
-
-            for (Conta conta : contas) {
-                conta.depositar(200);
+            public Aluno(String nome, String numeroMatricula, String curso) {
+                setNome(nome);
+                setNumeroMatricula(numeroMatricula);
+                setCurso(curso);
             }
 
-            imprimirContas(contas);
-            System.out.println();
-
-            try {
-                System.out.println(
-                        "Tentando sacar 1000 da conta corrente:"
-                );
-
-                cc1.sacar(1000);
-
-                System.out.println("Saque efetuado.");
-
-            } catch (SaldoInsuficienteException e) {
-                System.out.println("Erro: " + e.getMessage());
+            public String getNome() {
+                return nome;
             }
 
-            imprimirContas(contas);
-            System.out.println();
-
-            try {
-                System.out.println(
-                        "Tentando sacar 5000 da poupança:"
-                );
-
-                cp1.sacar(5000);
-
-            } catch (SaldoInsuficienteException e) {
-                System.out.println("Erro: " + e.getMessage());
-            }
-
-            imprimirContas(contas);
-            System.out.println();
-
-            try {
-                System.out.println(
-                        "Transferindo 300 da poupança para a conta corrente:"
-                );
-
-                cp1.transferir(cc1, 300);
-
-                System.out.println("Transferência efetuada.");
-
-            } catch (SaldoInsuficienteException e) {
-                System.out.println("Erro: " + e.getMessage());
-            }
-
-            imprimirContas(contas);
-            System.out.println();
-
-            for (Conta conta : contas) {
-
-                if (conta instanceof ContaPoupanca) {
-
-                    ContaPoupanca cp = (ContaPoupanca) conta;
-
-                    cp.aplicarRendimento();
-
-                    System.out.println(
-                            "Rendimento aplicado em "
-                                    + cp.getNumero()
-                    );
+            public void setNome(String nome) {
+                if (nome == null || nome.isBlank()) {
+                    throw new IllegalArgumentException("Nome inválido");
                 }
+                this.nome = nome;
             }
 
-            imprimirContas(contas);
-        }
+            public String getNumeroMatricula() {
+                return numeroMatricula;
+            }
 
-        private static void imprimirContas(List<Conta> contas) {
+            public void setNumeroMatricula(String numeroMatricula) {
+                if (numeroMatricula == null || numeroMatricula.isBlank()) {
+                    throw new IllegalArgumentException("Matrícula inválida");
+                }
+                this.numeroMatricula = numeroMatricula;
+            }
 
-            for (Conta conta : contas) {
-                System.out.println(conta);
+            public String getCurso() {
+                return curso;
+            }
+
+            public void setCurso(String curso) {
+                if (curso == null) {
+                    curso = "";
+                }
+
+                this.curso = curso;
+            }
+
+            public List<Livro> getEmprestimos() {
+                return new ArrayList<>(emprestimos);
+            }
+
+            public boolean matricularLivro(Livro livro) {
+                if (livro == null) {
+                    throw new IllegalArgumentException("Livro nulo");
+                }
+
+                if (!livro.emprestar()) {
+                    return false;
+                }
+
+                emprestimos.add(livro);
+                return true;
+            }
+
+            public boolean devolverLivro(Livro livro) {
+                if (livro == null) {
+                    throw new IllegalArgumentException("Livro nulo");
+                }
+
+                boolean removido = emprestimos.remove(livro);
+
+                if (removido) {
+                    livro.devolver();
+                }
+
+                return removido;
+            }
+
+            public String mostrarEmprestimos() {
+                if (emprestimos.isEmpty()) {
+                    return nome + " não tem empréstimos.";
+                }
+
+                StringBuilder sb = new StringBuilder(
+                        nome + " tem os seguintes livros:\n"
+                );
+
+                for (Livro livro : emprestimos) {
+                    sb.append(" - ")
+                            .append(livro.info())
+                            .append("\n");
+                }
+
+                return sb.toString();
+            }
+
+            @Override
+            public String toString() {
+                return nome + " (" + numeroMatricula + ") - " + curso;
             }
         }
+//Arquivo: BibliotecaApp.java
+package ao.universidade.poo.biblioteca;
+
+        public class BibliotecaApp {
+
+            public static void main(String[] args) {
+
+                Livro l1 = new Livro(
+                        "Introdução a Java",
+                        "Ana Silva",
+                        "9781234567890"
+                );
+
+                Livro l2 = new Livro(
+                        "Estruturas de Dados",
+                        "Carlos Souza",
+                        "9780987654321"
+                );
+
+                Aluno a1 = new Aluno(
+                        "João Pereira",
+                        "2023001",
+                        "Engenharia Informática"
+                );
+
+                Aluno a2 = new Aluno(
+                        "Maria Costa",
+                        "2023002",
+                        "Sistemas de Informação"
+                );
+
+                System.out.println("Estado inicial dos livros:");
+                System.out.println(l1.info());
+                System.out.println(l2.info());
+                System.out.println();
+
+                System.out.println("João tenta emprestar o livro 1:");
+
+                boolean sucesso = a1.matricularLivro(l1);
+
+                System.out.println("Empréstimo bem sucedido? " + sucesso);
+                System.out.println(a1.mostrarEmprestimos());
+                System.out.println(l1.info());
+                System.out.println();
+
+                System.out.println("Maria tenta emprestar o mesmo livro 1:");
+
+                boolean sucesso2 = a2.matricularLivro(l1);
+
+                System.out.println("Empréstimo bem sucedido? " + sucesso2);
+                System.out.println(a2.mostrarEmprestimos());
+                System.out.println(l1.info());
+                System.out.println();
+
+                System.out.println("João devolve o livro 1:");
+
+                boolean devolvido = a1.devolverLivro(l1);
+
+                System.out.println("Devolução efetuada? " + devolvido);
+                System.out.println(a1.mostrarEmprestimos());
+                System.out.println(l1.info());
+                System.out.println();
+
+                System.out.println("Agora Maria tenta novamente:");
+
+                boolean sucesso3 = a2.matricularLivro(l1);
+
+                System.out.println("Empréstimo bem sucedido? " + sucesso3);
+                System.out.println(a2.mostrarEmprestimos());
+                System.out.println(l1.info());
+            }
+        }
+
+
+
+
     }
-
 }
