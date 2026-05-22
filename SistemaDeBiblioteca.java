@@ -1,6 +1,6 @@
 import Livro.Livro;
 
-public class Main {
+public class SistemaDeBiblioteca {
     public static void main(String[] args) {
         //Problema 1 — Sistema de Biblioteca
 Arquivo: Livro.java
@@ -189,7 +189,7 @@ import java.util.List;
                 return nome + " (" + numeroMatricula + ") - " + curso;
             }
         }
-//Arquivo: BibliotecaApp.java
+Arquivo: BibliotecaApp.java
 package ao.universidade.poo.biblioteca;
 
         public class BibliotecaApp {
