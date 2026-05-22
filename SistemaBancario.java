@@ -1,4 +1,4 @@
-public class Main {
+public class SistemaBancario{
     Arquivo: SaldoInsuficienteException.java
 package ao.universidade.poo.banco;
 
